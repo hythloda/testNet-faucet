@@ -1,0 +1,114 @@
+<style>
+.canton-wrap {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 40px;
+  background: #120726;
+  color: white;
+  border-radius: 24px;
+  font-family: Arial, sans-serif;
+}
+
+.canton-wrap h1 {
+  margin: 0 0 16px;
+}
+
+.canton-wrap p {
+  color: rgba(255,255,255,0.78);
+  margin-bottom: 28px;
+}
+
+.canton-wrap label {
+  display: block;
+  margin: 0 0 8px;
+  font-weight: 600;
+}
+
+.canton-wrap input,
+.canton-wrap textarea,
+.canton-wrap button {
+  width: 100%;
+  margin: 0 0 18px;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #7b5cff;
+  background: #0d0820;
+  color: white;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+.canton-wrap textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.canton-wrap button {
+  background: #f2ff8d;
+  color: #170626;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.canton-wrap button:hover {
+  opacity: 0.9;
+}
+
+#thank-you-message {
+  display: none;
+  margin-top: 20px;
+  padding: 18px;
+  border-radius: 12px;
+  background: #1c1035;
+  border: 1px solid #7b5cff;
+  color: white;
+}
+</style>
+
+<div class="canton-wrap">
+  <iframe name="hidden_submit_frame" style="display:none;"></iframe>
+
+  <div id="form-shell">
+    <h1>TestNet Faucet Request</h1>
+    <p>Please complete this form to request CC for TestNet usage.</p>
+
+    <form
+      id="testnet-faucet-form"
+      action="https://script.google.com/macros/s/AKfycbz-F0DfbDvnaK5s3gqgi6p3AM-QoEUVmSueJRFmi6GP99rU1iI_TGJr5rxDUgDsrr__/exec"
+      method="post"
+      target="hidden_submit_frame"
+      onsubmit="if (!this.checkValidity()) return true; document.getElementById('form-shell').style.display='none'; document.getElementById('thank-you-message').style.display='block'; window.scrollTo({top:0,behavior:'smooth'}); return true;"
+    >
+      <label for="cc_amount">CC Amount *</label>
+      <input
+        type="number"
+        id="cc_amount"
+        name="CC Amount"
+        min="1"
+        step="1"
+        required
+      >
+
+      <label for="party_id">PartyID *</label>
+      <input
+        type="text"
+        id="party_id"
+        name="PartyID"
+        required
+      >
+
+      <label for="usage">Usage *</label>
+      <textarea
+        id="usage"
+        name="Usage"
+        required
+      ></textarea>
+
+      <button type="submit">Submit Request</button>
+    </form>
+  </div>
+
+  <div id="thank-you-message">
+    Thank you. Your TestNet faucet request has been submitted.
+  </div>
+</div>
