@@ -1,35 +1,59 @@
 <style>
+html,
+body {
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  background: #120726;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  box-sizing: border-box;
+}
+
 .canton-wrap {
-  max-width: 700px;
-  margin: 40px auto;
-  padding: 40px;
+  width: 100%;
+  max-width: 980px;
+  padding: 56px;
   background: #120726;
   color: white;
   border-radius: 24px;
-  font-family: Arial, sans-serif;
+  box-sizing: border-box;
 }
 
 .canton-wrap h1 {
   margin: 0 0 16px;
+  font-size: 40px;
+  line-height: 1.1;
+  letter-spacing: 1px;
 }
 
 .canton-wrap p {
   color: rgba(255,255,255,0.78);
-  margin-bottom: 28px;
+  margin: 0 0 32px;
+  font-size: 18px;
 }
 
 .canton-wrap label {
   display: block;
-  margin: 0 0 8px;
-  font-weight: 600;
+  margin: 0 0 10px;
+  font-weight: 700;
+  font-size: 16px;
 }
 
 .canton-wrap input,
 .canton-wrap textarea,
 .canton-wrap button {
   width: 100%;
-  margin: 0 0 18px;
-  padding: 14px;
+  margin: 0 0 22px;
+  padding: 16px;
   border-radius: 12px;
   border: 1px solid #7b5cff;
   background: #0d0820;
@@ -38,16 +62,23 @@
   font-size: 16px;
 }
 
+.canton-wrap input {
+  min-height: 58px;
+}
+
 .canton-wrap textarea {
-  min-height: 120px;
+  min-height: 150px;
   resize: vertical;
 }
 
 .canton-wrap button {
+  margin-top: 4px;
   background: #f2ff8d;
   color: #170626;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
+  border: none;
+  font-size: 18px;
 }
 
 .canton-wrap button:hover {
@@ -63,52 +94,24 @@
   border: 1px solid #7b5cff;
   color: white;
 }
+
+@media (max-width: 700px) {
+  body {
+    align-items: flex-start;
+    padding: 20px;
+  }
+
+  .canton-wrap {
+    padding: 28px;
+    border-radius: 18px;
+  }
+
+  .canton-wrap h1 {
+    font-size: 30px;
+  }
+
+  .canton-wrap p {
+    font-size: 16px;
+  }
+}
 </style>
-
-<div class="canton-wrap">
-  <iframe name="hidden_submit_frame" style="display:none;"></iframe>
-
-  <div id="form-shell">
-    <h1>TestNet Faucet Request</h1>
-    <p>Please complete this form to request CC for TestNet usage.</p>
-
-    <form
-      id="testnet-faucet-form"
-      action="https://script.google.com/macros/s/AKfycbz-F0DfbDvnaK5s3gqgi6p3AM-QoEUVmSueJRFmi6GP99rU1iI_TGJr5rxDUgDsrr__/exec"
-      method="post"
-      target="hidden_submit_frame"
-      onsubmit="if (!this.checkValidity()) return true; document.getElementById('form-shell').style.display='none'; document.getElementById('thank-you-message').style.display='block'; window.scrollTo({top:0,behavior:'smooth'}); return true;"
-    >
-      <label for="cc_amount">CC Amount *</label>
-      <input
-        type="number"
-        id="cc_amount"
-        name="CC Amount"
-        min="1"
-        step="1"
-        required
-      >
-
-      <label for="party_id">PartyID *</label>
-      <input
-        type="text"
-        id="party_id"
-        name="PartyID"
-        required
-      >
-
-      <label for="usage">Usage *</label>
-      <textarea
-        id="usage"
-        name="Usage"
-        required
-      ></textarea>
-
-      <button type="submit">Submit Request</button>
-    </form>
-  </div>
-
-  <div id="thank-you-message">
-    Thank you. Your TestNet faucet request has been submitted.
-  </div>
-</div>
