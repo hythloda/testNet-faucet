@@ -5,93 +5,121 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>TestNet Faucet Request</title>
 
-<style>
-html,
-body {
-  margin: 0;
-  min-height: 100%;
-  background: #120726;
-}
-
-.canton-wrap {
-  max-width: 700px;
-  margin: 40px auto;
-  padding: 40px;
-  background: #120726;
-  color: white;
-  border-radius: 24px;
-  font-family: Arial, sans-serif;
-}
-
-    h1 {
-      margin: 0 0 16px;
-      font-size: 42px;
-      line-height: 1.1;
+  <style>
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: #000000;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
     }
 
-    p {
-      margin: 0 0 32px;
-      color: rgba(255,255,255,0.78);
+    body {
+      min-height: 100vh;
+      padding: 48px 24px;
+      box-sizing: border-box;
+    }
+
+    .canton-wrap {
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 56px;
+      background: #100720;
+      color: #ffffff;
+      border-radius: 24px;
+      box-sizing: border-box;
+      border: 1px solid rgba(123, 92, 255, 0.35);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+    }
+
+    .canton-wrap h1 {
+      margin: 0 0 18px;
+      font-size: 40px;
+      line-height: 1.1;
+      letter-spacing: 1px;
+      color: #ffffff;
+    }
+
+    .canton-wrap p {
+      margin: 0 0 36px;
+      color: rgba(255, 255, 255, 0.78);
       font-size: 18px;
       line-height: 1.5;
     }
 
-    label {
+    .canton-wrap label {
       display: block;
       margin: 0 0 10px;
       font-weight: 700;
-      font-size: 16px;
+      font-size: 17px;
+      color: #ffffff;
     }
 
-    input,
-    textarea,
-    button {
+    .canton-wrap input,
+    .canton-wrap textarea,
+    .canton-wrap button {
       width: 100%;
-      margin: 0 0 22px;
+      margin: 0 0 26px;
       padding: 16px;
       border-radius: 12px;
-      border: 1px solid #7b5cff;
-      background: #0d0820;
-      color: white;
       box-sizing: border-box;
       font-size: 16px;
+      font-family: Arial, sans-serif;
     }
 
-    input {
+    .canton-wrap input,
+    .canton-wrap textarea {
+      background: #0b0618;
+      color: #ffffff;
+      border: 1px solid #7b5cff;
+      outline: none;
+    }
+
+    .canton-wrap input {
       min-height: 58px;
     }
 
-    textarea {
-      min-height: 150px;
+    .canton-wrap textarea {
+      min-height: 160px;
       resize: vertical;
     }
 
-    button {
+    .canton-wrap input:focus,
+    .canton-wrap textarea:focus {
+      border-color: #b9a8ff;
+      box-shadow: 0 0 0 3px rgba(123, 92, 255, 0.25);
+    }
+
+    .canton-wrap button {
+      margin: 4px 0 0;
+      min-height: 58px;
       background: #f2ff8d;
       color: #170626;
+      border: none;
       font-weight: 800;
       cursor: pointer;
-      border: none;
       font-size: 18px;
     }
 
-    button:hover {
-      opacity: 0.9;
+    .canton-wrap button:hover {
+      opacity: 0.92;
     }
 
     #thank-you-message {
       display: none;
       padding: 18px;
       border-radius: 12px;
-      background: #241044;
+      background: #1c1035;
       border: 1px solid #7b5cff;
-      color: white;
+      color: #ffffff;
+      font-size: 17px;
     }
 
     @media (max-width: 700px) {
       body {
-        align-items: flex-start;
-        padding: 20px;
+        padding: 24px 16px;
       }
 
       .canton-wrap {
@@ -99,11 +127,15 @@ body {
         border-radius: 18px;
       }
 
-      h1 {
+      .canton-wrap h1 {
         font-size: 30px;
       }
 
-      p {
+      .canton-wrap p {
+        font-size: 16px;
+      }
+
+      .canton-wrap label {
         font-size: 16px;
       }
     }
@@ -116,7 +148,7 @@ body {
 
     <div id="form-shell">
       <h1>TestNet Faucet Request</h1>
-      <p>Request Canton Coin for TestNet testing. Please include the PartyID that should receive the funds and a short description of your intended usage.</p>
+      <p>Please complete this form to request CC for TestNet usage.</p>
 
       <form
         id="testnet-faucet-form"
@@ -126,13 +158,29 @@ body {
         onsubmit="if (!this.checkValidity()) return true; document.getElementById('form-shell').style.display='none'; document.getElementById('thank-you-message').style.display='block'; window.scrollTo({top:0,behavior:'smooth'}); return true;"
       >
         <label for="cc_amount">CC Amount *</label>
-        <input type="number" id="cc_amount" name="CC Amount" min="1" step="1" required>
+        <input
+          type="number"
+          id="cc_amount"
+          name="CC Amount"
+          min="1"
+          step="1"
+          required
+        >
 
         <label for="party_id">PartyID *</label>
-        <input type="text" id="party_id" name="PartyID" required>
+        <input
+          type="text"
+          id="party_id"
+          name="PartyID"
+          required
+        >
 
         <label for="usage">Usage *</label>
-        <textarea id="usage" name="Usage" required></textarea>
+        <textarea
+          id="usage"
+          name="Usage"
+          required
+        ></textarea>
 
         <button type="submit">Submit Request</button>
       </form>
