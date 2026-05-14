@@ -57,6 +57,22 @@
       color: #ffffff;
     }
 
+    .helper-text {
+      margin: -4px 0 12px;
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .warning-text {
+      display: none;
+      margin: -4px 0 12px;
+      color: #f2ff8d;
+      font-size: 14px;
+      line-height: 1.4;
+      font-weight: 700;
+    }
+
     .canton-wrap input,
     .canton-wrap textarea,
     .canton-wrap button {
@@ -158,16 +174,20 @@
         onsubmit="if (!this.checkValidity()) return true; document.getElementById('form-shell').style.display='none'; document.getElementById('thank-you-message').style.display='block'; window.scrollTo({top:0,behavior:'smooth'}); return true;"
       >
         <label for="cc_amount">CC Amount *</label>
+        <div class="helper-text">Default request is 100 CC. Requests over 1000 CC may require additional justification.</div>
+        <div id="cc-warning" class="warning-text">Requests over 1000 CC will need justification in the Usage field.</div>
         <input
           type="number"
           id="cc_amount"
           name="CC Amount"
           min="1"
           step="1"
+          value="100"
           required
         >
 
         <label for="party_id">PartyID *</label>
+        <div class="helper-text">Please provide a PartyID for an active node in TestNet.</div>
         <input
           type="text"
           id="party_id"
@@ -175,11 +195,11 @@
           required
         >
 
-        <label for="usage">Usage *</label>
+        <label for="usage">Usage</label>
+        <div class="helper-text">Optional, unless requesting over 1000 CC.</div>
         <textarea
           id="usage"
           name="Usage"
-          required
         ></textarea>
 
         <button type="submit">Submit Request</button>
@@ -190,5 +210,22 @@
       Thank you. Your TestNet faucet request has been submitted.
     </div>
   </main>
+
+  <script>
+    const ccAmount = document.getElementById("cc_amount");
+    const usage = document.getElementById("usage");
+    const warning = document.getElementById("cc-warning");
+
+    function updateUsageRequirement() {
+      const amount = Number(ccAmount.value || 0);
+      const needsJustification = amount > 1000;
+
+      usage.required = needsJustification;
+      warning.style.display = needsJustification ? "block" : "none";
+    }
+
+    ccAmount.addEventListener("input", updateUsageRequirement);
+    updateUsageRequirement();
+  </script>
 </body>
 </html>
