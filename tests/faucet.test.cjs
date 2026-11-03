@@ -61,6 +61,21 @@ test('retries with the same ID do not create another request or send another ema
   assert.equal(h.state.rows.length,1);
 });
 
+test('optional email is validated, stored as a Monday email, and deduplicated by address',()=>{
+  const h=backend();const p={...params(),Email:'  Requester@example.com  '};
+  assert.equal(h.reply(p).success,true);
+  assert.deepEqual(h.state.rows[0].values[h.c.email],{email:'Requester@example.com',text:'Requester@example.com'});
+  assert.match(h.state.mails[0].body,/Email: Requester@example.com/);
+  assert.equal(h.reply({...p,Email:'requester@example.com'}).success,true);
+  assert.equal(h.state.rows.length,1);
+  assert.equal(h.reply({...p,Email:'other@example.com'}).success,false);
+  for(const email of ['missing-at','a@b','a@b.com\r\nBcc:evil@example.com','x'.repeat(250)+'@a.com']) {
+    const bad=backend();assert.equal(bad.reply({...params(),Email:email}).success,false);assert.equal(bad.state.rows.length,0);
+  }
+  const blank=backend();assert.equal(blank.reply({...params(),Email:''}).success,true);
+  assert.equal(blank.state.rows[0].values[blank.c.email],undefined);
+});
+
 test('server enforces the existing amount and justification rules',()=>{
   for(const amount of ['0','-1','1.5','abc','9007199254740992']) {
     const h=backend();assert.equal(h.reply({...params(),'CC Amount':amount}).success,false);assert.equal(h.state.rows.length,0);

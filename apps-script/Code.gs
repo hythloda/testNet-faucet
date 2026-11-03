@@ -1,10 +1,10 @@
 const FAUCET = Object.freeze({
   board: '18438203163', group: 'topics', qaGroup: 'group_mm8rkc2b',
   origin: 'https://testnet-faucet.canton.foundation',
-  owner: 'amanda@canton.foundation', version: 'monday-2026-11-02',
+  owner: 'amanda@canton.foundation', version: 'monday-email-2026-11-02',
   columns: {
     party: 'text_mm8rjpkq', amount: 'numeric_mm8rbnwm', usage: 'long_text_mm8rj7bj',
-    contact: 'text_mm8rgmsj', status: 'color_mm8r8qk2', created: 'date_mm8rpa1q',
+    contact: 'text_mm8rgmsj', email: 'email_mm8rat6m', status: 'color_mm8r8qk2', created: 'date_mm8rpa1q',
     modified: 'date_mm8rvwat', hours: 'numeric_mm8rc5vg', legacyId: 'text_mm8rk2b2',
     requestId: 'text_mm8rtpnw', source: 'text_mm8r4ar5', notification: 'color_mm8r8se0'
   }
@@ -42,20 +42,23 @@ function parseFaucetInput_(p) {
   if (amount > 1000 && !usage) throw faucetInputError_('Please explain requests over 1000 CC in Usage.');
   const contact = String(p.Contact || '').trim();
   if (contact.length > 512) throw faucetInputError_('Keep Contact under 512 characters.');
+  const email = String(p.Email || '').trim();
+  if (email && (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) throw faucetInputError_('Enter a valid email address or leave Email blank.');
   const requestId = String(p.request_id || Utilities.getUuid()).trim();
   if (!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(requestId)) throw faucetInputError_('Invalid submission ID. Please reload the form.');
-  return { amount: amount, party: party, usage: usage, contact: contact, requestId: requestId };
+  return { amount: amount, party: party, usage: usage, contact: contact, email: email, requestId: requestId };
 }
 
 function saveFaucetRequest_(request) {
   const c = FAUCET.columns;
   const found = faucetMonday_('query($b:ID!,$c:String!,$id:String!,$cols:[String!]!){items_page_by_column_values(board_id:$b,limit:1,columns:[{column_id:$c,column_values:[$id]}]){items{id column_values(ids:$cols){id text value}}}}',
-    { b: FAUCET.board, c: c.requestId, id: request.requestId, cols: [c.party, c.amount, c.usage, c.contact] });
+    { b: FAUCET.board, c: c.requestId, id: request.requestId, cols: [c.party, c.amount, c.usage, c.contact, c.email] });
   const existing = found.items_page_by_column_values.items[0];
   if (existing) {
     const cells = Object.fromEntries(existing.column_values.map(function (v) { return [v.id, v]; }));
     if (faucetCell_(cells[c.party]) !== request.party || Number(faucetCell_(cells[c.amount])) !== request.amount ||
-        faucetCell_(cells[c.usage]) !== request.usage || faucetCell_(cells[c.contact]) !== request.contact) {
+        faucetCell_(cells[c.usage]) !== request.usage || faucetCell_(cells[c.contact]) !== request.contact ||
+        faucetEmail_(cells[c.email]).toLowerCase() !== request.email.toLowerCase()) {
       throw faucetInputError_('This submission was already saved with different details. Reload the form to start a new request.');
     }
     return existing.id;
@@ -69,6 +72,7 @@ function saveFaucetRequest_(request) {
   values[c.amount] = String(request.amount);
   values[c.usage] = { text: request.usage };
   values[c.contact] = request.contact;
+  if (request.email) values[c.email] = { email: request.email, text: request.email };
   values[c.status] = { label: qa ? 'Ignoring' : 'New' };
   values[c.created] = faucetDate_(now);
   values[c.modified] = faucetDate_(now);
@@ -96,7 +100,7 @@ function notifyFaucet_(id, request) {
     if (!properties.getProperty(receipt)) {
       MailApp.sendEmail({ to: FAUCET.owner, subject: 'TestNet Faucet Response', name: 'Canton TestNet Faucet',
         body: 'PartyID: ' + request.party + '\n\nAmount: ' + request.amount + ' CC\n\nUsage: ' + request.usage +
-          '\n\nContact: ' + request.contact + '\n\nRequest in Monday: https://canton-foundation.monday.com/boards/' + FAUCET.board + '/pulses/' + id });
+          '\n\nContact: ' + request.contact + '\n\nEmail: ' + (request.email || '') + '\n\nRequest in Monday: https://canton-foundation.monday.com/boards/' + FAUCET.board + '/pulses/' + id });
       properties.setProperty(receipt, 'sent');
     }
     faucetUpdate_(id, { [FAUCET.columns.notification]: { label: 'Sent' } });
@@ -132,7 +136,7 @@ function retryFaucetNotifications_() {
           PropertiesService.getScriptProperties().setProperty('faucet-status:' + item.id, state);
         }
         if (['Pending', 'Failed'].includes(faucetCell_(cells[c.notification]))) {
-          notifyFaucet_(item.id, { party: faucetCell_(cells[c.party]), amount: faucetCell_(cells[c.amount]), usage: faucetCell_(cells[c.usage]), contact: faucetCell_(cells[c.contact]) });
+          notifyFaucet_(item.id, { party: faucetCell_(cells[c.party]), amount: faucetCell_(cells[c.amount]), usage: faucetCell_(cells[c.usage]), contact: faucetCell_(cells[c.contact]), email: faucetEmail_(cells[c.email]) });
         }
       }
       cursor = page.cursor || null;
@@ -192,6 +196,11 @@ function faucetCell_(cell) {
     try { const value = JSON.parse(cell.value); if (value && typeof value.text === 'string') return value.text; } catch (ignored) { /* use display text */ }
   }
   return cell.text || '';
+}
+
+function faucetEmail_(cell) {
+  if (!cell || !cell.value) return '';
+  try { return JSON.parse(cell.value).email || ''; } catch (ignored) { return ''; }
 }
 
 function faucetDate_(value) {

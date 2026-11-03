@@ -42,6 +42,15 @@ This workflow queues requests for existing manual processing; it does not transf
 CC. Imported history and authorized validation requests do not send notifications.
 Processing Hours for new website requests updates when their status changes.
 
+Email address is optional on the public form and saves to the board's Email
+column. Three native Monday automations send requester email only when Email is
+not empty: Done confirms completion; Error and Ignoring ask the requester to
+check the PartyID and turn on preapprovals, then submit again. These rules run
+when Status changes, so changing back to one of these statuses sends another
+message. The existing Notification column tracks the separate operator intake
+notification. The amount column displays an integer without a unit or thousands
+separator so operators can copy the numeric value directly.
+
 ## History migration
 
 The original Airtable table is `appTtVN4nqIaTA7CH/tbloCT1z18vC1i8mL`.
