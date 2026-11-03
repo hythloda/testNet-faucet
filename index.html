@@ -123,6 +123,10 @@
       opacity: 0.92;
     }
 
+    .canton-wrap button:disabled { cursor: wait; opacity: 0.65; }
+    .form-trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+    #submit-error { margin: 18px 0 0; color: #f2ff8d; line-height: 1.5; }
+
     #thank-you-message {
       display: none;
       padding: 18px;
@@ -160,7 +164,7 @@
 
 <body>
   <main class="canton-wrap">
-    <iframe name="hidden_submit_frame" style="display:none;"></iframe>
+    <iframe name="hidden_submit_frame" title="Request submission response" style="display:none;"></iframe>
 
     <div id="form-shell">
       <h1>TestNet Faucet Request</h1>
@@ -171,8 +175,9 @@
         action="https://script.google.com/macros/s/AKfycbz_acv0vWUn1I8UYZh4s4Bbbim3spttjl9Q_ckXB0p1a8EHKbBcfCmTKs6-xsFLdxKCwg/exec"
         method="post"
         target="hidden_submit_frame"
-        onsubmit="if (!this.checkValidity()) return true; document.getElementById('form-shell').style.display='none'; document.getElementById('thank-you-message').style.display='block'; window.scrollTo({top:0,behavior:'smooth'}); return true;"
       >
+        <input type="hidden" id="request-id" name="request_id">
+        <div class="form-trap" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
         <label for="cc_amount">CC Amount *</label>
         <div class="helper-text">Default request is 100 CC. Requests over 1000 CC may require additional justification.</div>
         <div id="cc-warning" class="warning-text">Requests over 1000 CC will need justification in the Usage field.</div>
@@ -192,6 +197,7 @@
           type="text"
           id="party_id"
           name="PartyID"
+          maxlength="512"
           required
         >
 
@@ -200,9 +206,11 @@
         <textarea
           id="usage"
           name="Usage"
+          maxlength="10000"
         ></textarea>
 
-        <button type="submit">Submit Request</button>
+        <button id="submit-request" type="submit">Submit Request</button>
+        <div id="submit-error" role="alert" hidden></div>
       </form>
     </div>
 
@@ -211,21 +219,6 @@
     </div>
   </main>
 
-  <script>
-    const ccAmount = document.getElementById("cc_amount");
-    const usage = document.getElementById("usage");
-    const warning = document.getElementById("cc-warning");
-
-    function updateUsageRequirement() {
-      const amount = Number(ccAmount.value || 0);
-      const needsJustification = amount > 1000;
-
-      usage.required = needsJustification;
-      warning.style.display = needsJustification ? "block" : "none";
-    }
-
-    ccAmount.addEventListener("input", updateUsageRequirement);
-    updateUsageRequirement();
-  </script>
+  <script src="faucet-form.js?v=monday-2026-11-02"></script>
 </body>
 </html>

@@ -1,0 +1,4 @@
+.env*
+.clasp.json
+*-backup.json
+node_modules/
